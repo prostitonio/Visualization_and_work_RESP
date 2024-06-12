@@ -45,8 +45,8 @@ class Molecula:
             self.esp_color_ch = self.ch_to_color(self.esp_ch)
             self.update_esp()
 
-    def pick_out_mol(self):
-        self.pick_out_flag = True
+    def pick_out_mol(self, flag):
+        self.pick_out_flag = flag
 
 
     def get_center_mass(self):
