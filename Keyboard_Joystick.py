@@ -79,11 +79,8 @@ class Keyboard_Joystick:
         if self.joystick_on_off == True:
             for event in all_event:
                 if event.type == pygame.JOYBUTTONDOWN:
-                    joystick_count = pygame.joystick.get_count()
-                    #text_print.tprint(screen, f"Number of joysticks: {joystick_count}")
                     for joystick in self.joysticks.values():
                         button = joystick.get_button(0)
-    #                    time.sleep(0.1)
                         if button == 1:
                             if self.mode != "selection_molecules":
                                 self.sys.start_selection()
@@ -98,12 +95,26 @@ class Keyboard_Joystick:
             case "selection_molecules":
                 self.selection_molecules(all_event)
     def selection_molecules(self,all_event):
-        for event in all_event:
-            if event.type == pygame.KEYDOWN:
-                if event.key == 110: # N
-                    self.sys.next_selection()
-                if event.key == 98: # B
-                    self.sys.previous_selection()
+        
+        if self.joystick_on_off == False:
+            for event in all_event:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == 110: # N
+                        self.sys.next_selection()
+                    if event.key == 98: # B
+                        self.sys.previous_selection()
+        else:
+            for event in all_event:
+                if event.type == pygame.JOYBUTTONDOWN:
+                    for joystick in self.joysticks.values():
+                        if joystick.get_button(6) == 1:
+                            self.sys.next_selection()
+
+                        if joystick.get_button(7) == 1:
+                            self.sys.previous_selection()
+                        #if button == 1:
+
+
                 
 
     def rotate_main_system(self,all_event):
