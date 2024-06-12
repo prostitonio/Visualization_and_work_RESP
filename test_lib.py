@@ -51,6 +51,11 @@ def set_camera():
     glTranslatef(0,0 ,r)
     glRotatef( the,1, 0, 0)
     glRotatef( phi,0, 0, 1)
+
+
+class Keyboard_Joystick:
+
+
 def get_pressed():
     global phi,the,dthe,r,dr,joystick_on_off,joysticks
 
@@ -139,8 +144,36 @@ def get_pressed():
             hat = joystick.get_hat(i)
             #text_print.tprint(screen, f"Hat {i} value: {str(hat)}")
 #_______________________________________#
+class System:
+    all_molecule=[]
+    def __init__(self,*all_mol):
+        for mol in all_mol:
+            if type(mol) == Molecula:
+                self.all_molecule.append(mol)
+            else:
+                pass
+    def append(self,mol):
+        if type(mol) == Molecula:
+            self.all_molecule.append(mol)
+        else:
+            #print("add")
+            pass
+    def show_system(self,esp=False):
+        for mol in self.all_molecule:
+            mol.show_molecule(esp)
+        
 mol = Molecula('UNK_D65243.pdb',"UNK_C7DFF1.log",0.0)
-#mol.set_normal_coord()
+mol3 = Molecula('UNK_D65243.pdb',"UNK_C7DFF1.log",0.0)
+mol2 = Molecula('UNK_D65243.pdb',"UNK_C7DFF1.log",0.0)
+mol.shift_coord([0,0,3])
+mol.pick_out_mol()
+mol2.pick_out_mol()
+mol2.shift_coord([0,3,0])
+mol3.shift_coord([3,0,0])
+sys = System()
+sys.append(mol)
+sys.append(mol2)
+sys.append(mol3)
 
 
 pygame.init()
@@ -158,9 +191,7 @@ while True:
 
     set_camera()
     show_sys_coord()
-    mol.show_molecule()
-#    mol1.show_molecule()
-    mol.show_ESP()
+    sys.show_system()
 
     glPopMatrix()
 

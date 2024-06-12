@@ -14,13 +14,6 @@ import json
 
 
 np.random.seed(1)
-phi = -137
-the = 310
-dphi = 3
-r = -5
-dr = 0.5
-joysticks = {}
-joystick_on_off = False
 #_______________________________________#
 class Molecula:
     conv = 0.002
@@ -31,6 +24,10 @@ class Molecula:
     with open('json_file/all_color_type.json') as f:
         all_color =json.loads(json.load(f))
     all_type_mass     = {"O":16      ,"H":1       ,"C":12              ,"N":14}
+    esp_on = False
+    pick_out_flag = False
+    
+
     def __init__(self,pdb_name,log_name="",del_mol_proc=0):
         pdb = PDBFile(pdb_name)
         self.all_atom     = 10*np.array([[i.x,i.y,i.z] for i in pdb.positions       ])
@@ -41,11 +38,16 @@ class Molecula:
 
 
         if log_name !="":
+            #print("work")
             self.esp_on = log_name !=""
             esp_coord ,esp_ch = self.esp_coord_ch(log_name)
             self.esp_coord,self.esp_ch = self.del_exes(esp_coord,esp_ch,del_mol_proc)
             self.esp_color_ch = self.ch_to_color(self.esp_ch)
             self.update_esp()
+
+    def pick_out_mol(self):
+        self.pick_out_flag = True
+
 
     def get_center_mass(self):
         self.center_mass  = np.einsum('ij,i',self.all_atom,self.all_mass)/np.sum(self.all_mass)
@@ -90,7 +92,7 @@ class Molecula:
                     ch.append(float(sp[2]))
         return np.array(xyz),np.array(ch)
 
-    def ch_to_color(self,esp_ch):
+    def ch_to_color(self,esp_ch,pick_out_flag=False):
         a = (esp_ch - min(esp_ch))/(max(esp_ch)-min(esp_ch))
         d = np.zeros((len(a),3))+1
         d[:,0] = a
@@ -99,11 +101,24 @@ class Molecula:
             esp_color.append(colorsys.hsv_to_rgb(*i))
         return np.array(esp_color )
 
-    def show_molecule(self):
+    def show_molecule(self,esp=False):
+        dark = 0.3
         for i,count in enumerate(self.all_atom):
-            self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,self.all_color[self.all_type[i]])
+            if self.pick_out_flag == True:
+                h , s , v  = colorsys.rgb_to_hsv(*self.all_color[self.all_type[i]])
+                rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
+                self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,rgb)
+            else:
+                self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,self.all_color[self.all_type[i]])
         for i in self.all_constr:
-            self.show_constr(i,self.all_atom,(1,1,1))
+            if self.pick_out_flag == True:
+                h , s , v  = colorsys.rgb_to_hsv(*(1,1,1))
+                rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
+                self.show_constr(i,self.all_atom,rgb)
+            else:
+                self.show_constr(i,self.all_atom,(1,1,1))
+        if esp==True:
+            self.show_ESP()
 
     def show_constr(self,a,all_coord,color):
         a1,a2 = a
