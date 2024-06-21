@@ -82,8 +82,8 @@ class System:
         for mol in self.all_molecule:
             mol.pick_out_mol(flag)
 
-    def show_system(self,esp=False):
+    def show_system(self):
         if self.coord_visible == True:
             self.show_sys_coord() 
         for mol in self.all_molecule:
-            mol.show_molecule(esp)
+            mol.show_molecule()

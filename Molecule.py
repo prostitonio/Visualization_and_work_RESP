@@ -16,15 +16,16 @@ import json
 np.random.seed(1)
 #_______________________________________#
 class Molecula:
-    conv = 0.002
-    #conv = 0.01
+    #conv = 0.002
+    conv = 0.01
     with open('json_file/all_vdw_radius.json') as f:
         #all_r = json.load(f)
         all_r = json.loads(json.load(f))
     with open('json_file/all_color_type.json') as f:
         all_color =json.loads(json.load(f))
     all_type_mass     = {"O":16      ,"H":1       ,"C":12              ,"N":14}
-    esp_on = False
+    visible_esp = False
+    visible_mol = True
     pick_out_flag = False
     
 
@@ -39,7 +40,7 @@ class Molecula:
 
         if log_name !="":
             #print("work")
-            self.esp_on = log_name !=""
+            self.visible_esp = True
             esp_coord ,esp_ch = self.esp_coord_ch(log_name)
             self.esp_coord,self.esp_ch = self.del_exes(esp_coord,esp_ch,del_mol_proc)
             self.esp_color_ch = self.ch_to_color(self.esp_ch)
@@ -101,23 +102,24 @@ class Molecula:
             esp_color.append(colorsys.hsv_to_rgb(*i))
         return np.array(esp_color )
 
-    def show_molecule(self,esp=False):
+    def show_molecule(self):
         dark = 0.3
-        for i,count in enumerate(self.all_atom):
-            if self.pick_out_flag == True:
-                h , s , v  = colorsys.rgb_to_hsv(*self.all_color[self.all_type[i]])
-                rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
-                self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,rgb)
-            else:
-                self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,self.all_color[self.all_type[i]])
-        for i in self.all_constr:
-            if self.pick_out_flag == True:
-                h , s , v  = colorsys.rgb_to_hsv(*(1,1,1))
-                rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
-                self.show_constr(i,self.all_atom,rgb)
-            else:
-                self.show_constr(i,self.all_atom,(1,1,1))
-        if esp==True:
+        if self.visible_mol:
+            for i,count in enumerate(self.all_atom):
+                if self.pick_out_flag == True:
+                    h , s , v  = colorsys.rgb_to_hsv(*self.all_color[self.all_type[i]])
+                    rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
+                    self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,rgb)
+                else:
+                    self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,self.all_color[self.all_type[i]])
+            for i in self.all_constr:
+                if self.pick_out_flag == True:
+                    h , s , v  = colorsys.rgb_to_hsv(*(1,1,1))
+                    rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
+                    self.show_constr(i,self.all_atom,rgb)
+                else:
+                    self.show_constr(i,self.all_atom,(1,1,1))
+        if self.visible_esp:
             self.show_ESP()
 
     def show_constr(self,a,all_coord,color):
@@ -158,7 +160,7 @@ class Molecula:
     def shift_coord(self,xyz):
         xyz = np.array(xyz)
         self.all_atom = self.all_atom + xyz
-        if self.esp_on:
+        if self.visible_esp:
             self.esp_coord = self.esp_coord + xyz
             self.update_esp()
     def set_normal_coord(self):

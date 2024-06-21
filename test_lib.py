@@ -15,6 +15,24 @@ from System import *
 from Keyboard_Joystick import *
 np.random.seed(1)
 
+def save_com_file(name,sys):
+    in_file = ""
+    in_file += "%mem=6GB\n"
+    in_file += "%NProcShared=32\n"
+    in_file += "# HF/6-31G* SCF=Tight Pop=MK IOp(6/33=2,6/41=10,6/42=17) Nosymm\n"
+    in_file += "\ncomment\n\n"
+    in_file += "0 1\n"
+    for mol in sys.all_molecule:
+        for i in range(len(mol.all_atom)):
+            in_file+=mol.all_type[i]+" "
+            for j in mol.all_atom[i]:
+                in_file+=str(j)+" "
+            in_file+="\n"
+    in_file+="\n"
+    with open(name, 'w') as f:
+        f.write(in_file)
+    #print(in_file) 
+
 
 def set_camera(key):
     phi, the, r = key.get_coord()
@@ -23,9 +41,11 @@ def set_camera(key):
     glRotatef( phi,0, 0, 1)
 
         
-mol = Molecula('UNK_D65243.pdb')#,"UNK_C7DFF1.log",0.0)
-mol3 = Molecula('UNK_D65243.pdb')#,"UNK_C7DFF1.log",0.0)
-mol2 = Molecula('UNK_D65243.pdb')#,"UNK_C7DFF1.log",0.0)
+mol = Molecula('UNK_D65243.pdb')
+mol4 = Molecula('UNK_D65243.pdb',"test.log",0.0)
+mol3 = Molecula('UNK_D65243.pdb')
+mol2 = Molecula('UNK_D65243.pdb')
+mol4.visible_mol = False
 mol.shift_coord([0,0,3])
 mol2.shift_coord([0,3,0])
 mol3.shift_coord([3,0,0])
@@ -34,8 +54,9 @@ sys = System()
 sys.append(mol)
 sys.append(mol2)
 sys.append(mol3)
+sys.append(mol4)
 #sys.start_selection()
-
+save_com_file("test.com",sys)
 key_B = Keyboard_Joystick(sys)
 
 pygame.init()
