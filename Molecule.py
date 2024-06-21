@@ -16,8 +16,8 @@ import json
 np.random.seed(1)
 #_______________________________________#
 class Molecula:
-    #conv = 0.002
-    conv = 0.01
+    conv = 0.002
+    #conv = 0.01
     with open('json_file/all_vdw_radius.json') as f:
         #all_r = json.load(f)
         all_r = json.loads(json.load(f))
@@ -35,6 +35,7 @@ class Molecula:
         self.all_type     = [                  i.name[0]for i in pdb.topology.atoms()]
         self.all_mass     = np.array([ self.all_type_mass[i] for i in self.all_type])
         self.all_constr   = np.array([[i.atom1.index,i.atom2.index]  for i in pdb.topology.bonds()])
+        self.all_color    = [self.all_color[t] for t in self.all_type]
         self.center_mass  = self.get_center_mass() 
 
 
@@ -107,11 +108,11 @@ class Molecula:
         if self.visible_mol:
             for i,count in enumerate(self.all_atom):
                 if self.pick_out_flag == True:
-                    h , s , v  = colorsys.rgb_to_hsv(*self.all_color[self.all_type[i]])
+                    h , s , v  = colorsys.rgb_to_hsv(*self.all_color[i])
                     rgb = colorsys.hsv_to_rgb(h,s*dark,v*dark) 
                     self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,rgb)
                 else:
-                    self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,self.all_color[self.all_type[i]])
+                    self.show_Sphere(count,self.all_r[self.all_type[i]]*self.conv,self.all_color[i])
             for i in self.all_constr:
                 if self.pick_out_flag == True:
                     h , s , v  = colorsys.rgb_to_hsv(*(1,1,1))

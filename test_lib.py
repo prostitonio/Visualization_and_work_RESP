@@ -13,7 +13,7 @@ import ctypes
 from Molecule import *
 from System import *
 from Keyboard_Joystick import *
-np.random.seed(1)
+from tess import Container
 
 def save_com_file(name,sys):
     in_file = ""
@@ -42,21 +42,38 @@ def set_camera(key):
 
         
 mol = Molecula('UNK_D65243.pdb')
-mol4 = Molecula('UNK_D65243.pdb',"test.log",0.0)
-mol3 = Molecula('UNK_D65243.pdb')
-mol2 = Molecula('UNK_D65243.pdb')
-mol4.visible_mol = False
-mol.shift_coord([0,0,3])
-mol2.shift_coord([0,3,0])
-mol3.shift_coord([3,0,0])
+#mol4 = Molecula('UNK_D65243.pdb',"test.log",0.0)
+#mol3 = Molecula('UNK_D65243.pdb')
+#mol2 = Molecula('UNK_D65243.pdb')
+#mol4.visible_mol = False
+mol.shift_coord( [3,0.55,2.2])
+#mol2.shift_coord([0,3,0])
+#mol3.shift_coord([3,0,0])
 sys = System()
 
 sys.append(mol)
-sys.append(mol2)
-sys.append(mol3)
-sys.append(mol4)
+#sys.append(mol2)
+#sys.append(mol3)
+#sys.append(mol4)
+
+cntr = Container(mol.all_atom, limits=(6,3,4.1), periodic=True)
+ver  = np.array([v.face_vertices() for v in cntr])
+ver_coord = np.array([v.vertices() for v in cntr])
+def gen_color():
+    return np.random.rand(3)
+def show_constr(a1,a2,color):
+    glLineWidth(2.)
+    glBegin(GL_LINES)
+    glColor3f(*color);glVertex3d(*a1);glVertex3d(*a2)
+    glEnd()
+def show_couter(all_atom,all_num,color):
+    for place in all_num:
+        for i in range(len(place)-1):
+            show_constr(all_atom[place[i]],all_atom[place[i+1]],color)
+
+
 #sys.start_selection()
-save_com_file("test.com",sys)
+#save_com_file("test.com",sys)
 key_B = Keyboard_Joystick(sys)
 
 pygame.init()
@@ -69,12 +86,16 @@ gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
 glClearColor(0.01,0.01,0.1,0) 
 
 while True:
+    np.random.seed(1)
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glPushMatrix()
 
     set_camera(key_B)
     sys.show_system()
+    for i in range(len(ver)):
+        show_couter(ver_coord[i],ver[i],mol.all_color[i])
 
+    
     glPopMatrix()
 
     #get_pressed()

@@ -11,6 +11,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import ctypes
 from Molecule import *
+from mol_test import *
 
 
 
@@ -53,7 +54,7 @@ class System:
         glPopMatrix()
 
     def append(self,mol):
-        if type(mol) == Molecula:
+        if type(mol) == Molecula or type(mol) == Molecula_test:
             self.all_molecule.append(mol)
         else:
             #print("add")
@@ -83,7 +84,9 @@ class System:
             mol.pick_out_mol(flag)
 
     def show_system(self):
+        #print("show sys")
         if self.coord_visible == True:
             self.show_sys_coord() 
+        #print(self.all_molecule)
         for mol in self.all_molecule:
             mol.show_molecule()
