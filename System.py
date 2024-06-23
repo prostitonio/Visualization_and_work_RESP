@@ -11,7 +11,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import ctypes
 from Molecule import *
-from mol_test import *
 
 
 
