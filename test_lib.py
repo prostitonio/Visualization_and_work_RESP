@@ -50,7 +50,8 @@ while True:
 
     set_camera(key_B)
     if count % 170 ==0:
-        s.next()
+        #s.next()
+        pass
     count+=1
     s.show_network_hbonds()
     #s.show_system()

@@ -131,13 +131,15 @@ class System:
 
     def show_network_hbonds(self):
         np.random.seed(1)
+        d = 0.3
+        m = 1
         if self.coord_visible == True:
             self.show_sys_coord()
         for clas in self.all_claster_hbond:
             color = np.random.rand(3)
-            if len(clas)<10:
+            if len(clas)<20:
                 for mol in clas:
-                    self.show_Sphere(self.all_atom_c_mass[mol],0.4,color)
+                    self.show_Sphere(self.all_atom_c_mass[mol],(m-d)/len(clas)+d,color)
         for i in self.hb_mol:
             #self.show_constr_hbons(i,self.all_atom_c_mass,(0.9,0.1,0))
             pass
